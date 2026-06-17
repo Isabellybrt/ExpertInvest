@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// === Enums ===
+
+enum RateType {
+  CDI_PERCENTAGE
+  IPCA_PLUS
+}
+
+enum AssetType {
+  RENDA_FIXA
+  FII
+}
+
+enum OperationType {
+  NEW_POSITION
+  EXISTING_POSITION
+}
+
+enum IndexType {
+  CDI
+  IPCA
+}
+
+// === Models ===
+
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  passwordHash        String?
+  googleId            String?   @unique
+  name                String?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  rendaFixa           RendaFixa[]
+  fiis                FII[]
+  aportes             Aporte[]
+  sessions            Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  token        String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  lastActivity DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model RendaFixa {
+  id             String   @id @default(uuid())
+  userId         String
+  institution    String   @db.VarChar(100)
+  investedAmount Decimal  @db.Decimal(14, 2)
+  maturityDate   DateTime
+  rateType       RateType
+  rateValue      Decimal  @db.Decimal(6, 4)
+  ipcaPlusRate   Decimal? @db.Decimal(5, 4)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id])
+  aportes        Aporte[]
+
+  @@index([userId])
+}
+
+model FII {
+  id           String   @id @default(uuid())
+  userId       String
+  ticker       String   @db.VarChar(6)
+  shares       Int
+  averagePrice Decimal  @db.Decimal(10, 2)
+  purchaseDate DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id])
+  aportes      Aporte[]
+  quotes       FIIQuote[]
+  dividends    FIIDividend[]
+
+  @@index([userId])
+}
+
+model FIIQuote {
+  id         String   @id @default(uuid())
+  fiiId      String
+  price      Decimal  @db.Decimal(10, 2)
+  sourceDate DateTime
+  updatedAt  DateTime @default(now())
+
+  fii        FII      @relation(fields: [fiiId], references: [id], onDelete: Cascade)
+
+  @@index([fiiId, updatedAt])
+}
+
+model FIIDividend {
+  id               String   @id @default(uuid())
+  fiiId            String
+  dividendPerShare Decimal  @db.Decimal(10, 6)
+  dividendYield    Decimal  @db.Decimal(5, 2)
+  paymentDate      DateTime
+  updatedAt        DateTime @default(now())
+
+  fii              FII      @relation(fields: [fiiId], references: [id], onDelete: Cascade)
+
+  @@index([fiiId, paymentDate])
+}
+
+
+model Aporte {
+  id            String        @id @default(uuid())
+  userId        String
+  assetType     AssetType
+  rendaFixaId   String?
+  fiiId         String?
+  amount        Decimal       @db.Decimal(14, 2)
+  shares        Int?
+  pricePerShare Decimal?      @db.Decimal(10, 2)
+  operationType OperationType
+  date          DateTime
+  createdAt     DateTime      @default(now())
+
+  user          User          @relation(fields: [userId], references: [id])
+  rendaFixa     RendaFixa?    @relation(fields: [rendaFixaId], references: [id], onDelete: SetNull)
+  fii           FII?          @relation(fields: [fiiId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+}
+
+model MarketIndex {
+  id        String    @id @default(uuid())
+  indexType IndexType
+  value     Decimal   @db.Decimal(10, 6)
+  date      DateTime
+  updatedAt DateTime  @default(now())
+
+  @@unique([indexType, date])
+  @@index([indexType, date])
+}
+
+model CronLog {
+  id            String   @id @default(uuid())
+  executionDate DateTime @default(now())
+  successCount  Int
+  failureCount  Int
+  errors        Json?
+  duration      Int      // milliseconds
+}

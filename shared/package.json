@@ -1,0 +1,19 @@
+{
+  "name": "shared",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "fast-check": "^3.23.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}

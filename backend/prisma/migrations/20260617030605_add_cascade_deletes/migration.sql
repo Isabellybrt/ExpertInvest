@@ -1,0 +1,11 @@
+-- DropForeignKey
+ALTER TABLE "FIIDividend" DROP CONSTRAINT "FIIDividend_fiiId_fkey";
+
+-- DropForeignKey
+ALTER TABLE "FIIQuote" DROP CONSTRAINT "FIIQuote_fiiId_fkey";
+
+-- AddForeignKey
+ALTER TABLE "FIIQuote" ADD CONSTRAINT "FIIQuote_fiiId_fkey" FOREIGN KEY ("fiiId") REFERENCES "FII"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FIIDividend" ADD CONSTRAINT "FIIDividend_fiiId_fkey" FOREIGN KEY ("fiiId") REFERENCES "FII"("id") ON DELETE CASCADE ON UPDATE CASCADE;

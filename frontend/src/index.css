@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile First base styles - no horizontal scrollbar from 320px to 1920px (Req 12.1) */
+@layer base {
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  body {
+    @apply min-h-screen bg-white text-gray-900 antialiased;
+    /* Minimum 16px font size on mobile (Req 12.4) */
+    font-size: 16px;
+  }
+
+  /* Ensure all interactive elements have minimum 44x44px touch targets on mobile (Req 12.3) */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    @apply min-w-touch min-h-touch;
+  }
+}
+
+/* Mobile First layout: single column by default, multi-column on md+ */
+@layer components {
+  .layout-grid {
+    @apply grid grid-cols-1 gap-4;
+  }
+
+  @screen md {
+    .layout-grid {
+      @apply grid-cols-2;
+    }
+  }
+
+  @screen lg {
+    .layout-grid {
+      @apply grid-cols-3;
+    }
+  }
+}
