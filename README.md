@@ -1,4 +1,4 @@
-# ExpertInvest — Gerenciador de Carteira de Investimentos
+# ExpertInvest: Gerenciador de Carteira de Investimentos
 
 Aplicação web completa para gerenciamento de carteira de investimentos pessoal, com suporte a **Renda Fixa** (CDB, LCI, LCA, Tesouro Direto) e **Fundos Imobiliários (FIIs)**.
 
