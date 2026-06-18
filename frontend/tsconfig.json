@@ -26,9 +26,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@shared": ["../shared"],
       "@shared/*": ["../shared/*"]
     }
   },
   "include": ["src", "vite-env.d.ts"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.spec.ts", "src/**/*.spec.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

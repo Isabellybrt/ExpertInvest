@@ -102,11 +102,8 @@ export function useRendaFixaViewModel(): UseRendaFixaViewModel {
     } catch (err) {
       if (err instanceof ApiClientError) {
         if (err.errors) {
-          setValidationErrors(
-            Object.fromEntries(
-              Object.entries(err.errors).map(([key, msgs]) => [key, msgs[0]])
-            )
-          );
+          const entries = Object.entries(err.errors).map(([key, msgs]) => [key, msgs[0]] as const);
+          setValidationErrors(Object.fromEntries(entries) as Record<string, string>);
         }
         addToast('error', err.message);
       } else {
@@ -139,11 +136,8 @@ export function useRendaFixaViewModel(): UseRendaFixaViewModel {
     } catch (err) {
       if (err instanceof ApiClientError) {
         if (err.errors) {
-          setValidationErrors(
-            Object.fromEntries(
-              Object.entries(err.errors).map(([key, msgs]) => [key, msgs[0]])
-            )
-          );
+          const entries = Object.entries(err.errors).map(([key, msgs]) => [key, msgs[0]] as const);
+          setValidationErrors(Object.fromEntries(entries) as Record<string, string>);
         }
         addToast('error', err.message);
       } else {
