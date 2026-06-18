@@ -1,5 +1,5 @@
 import { RendaFixaRepository } from '../repositories/renda-fixa.repository.js';
-import { rendaFixaSchema } from '@shared/src/schemas.js';
+import { rendaFixaSchema } from 'shared/src/schemas.js';
 import { z } from 'zod';
 
 export interface CreateRendaFixaDTO {
