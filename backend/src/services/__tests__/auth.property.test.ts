@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import fc from 'fast-check';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { AuthService, AuthError } from '../auth.service.js';
 import { isSessionExpired } from '../../middleware/auth.middleware.js';
 
@@ -17,8 +17,8 @@ vi.mock('google-auth-library', () => ({
 }));
 
 // Mock bcrypt to avoid slow hash operations in property tests
-vi.mock('bcrypt', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('bcrypt')>();
+vi.mock('bcryptjs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('bcryptjs')>();
   return {
     ...actual,
     default: {
