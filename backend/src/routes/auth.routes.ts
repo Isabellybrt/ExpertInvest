@@ -125,8 +125,9 @@ function handleAuthError(error: unknown, reply: FastifyReply): FastifyReply {
     });
   }
 
+  console.error('Auth route unhandled error:', error);
   return reply.code(500).send({
     error: 'INTERNAL_ERROR',
-    message: 'An unexpected error occurred',
+    message: error instanceof Error ? error.message : 'An unexpected error occurred',
   });
 }
