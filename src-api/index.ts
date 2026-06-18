@@ -15,7 +15,7 @@ let app: ReturnType<typeof Fastify> | null = null;
 async function buildApp() {
   if (app) return app;
 
-  app = Fastify({ logger: false });
+  app = Fastify({ logger: true });
 
   await app.register(cors, { origin: true });
 
@@ -35,26 +35,35 @@ async function buildApp() {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const fastify = await buildApp();
+  try {
+    const fastify = await buildApp();
 
-  const payload = req.method !== 'GET' && req.method !== 'HEAD' && req.body
-    ? (typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
-    : undefined;
+    const payload = req.method !== 'GET' && req.method !== 'HEAD' && req.body
+      ? (typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
+      : undefined;
 
-  const response = await fastify.inject({
-    method: req.method as any,
-    url: req.url || '/',
-    headers: req.headers as Record<string, string>,
-    payload,
-  });
+    const response = await fastify.inject({
+      method: req.method as any,
+      url: req.url || '/',
+      headers: req.headers as Record<string, string>,
+      payload,
+    });
 
-  // Forward response headers
-  const responseHeaders = response.headers;
-  for (const [key, value] of Object.entries(responseHeaders)) {
-    if (value !== undefined) {
-      res.setHeader(key, value as string);
+    // Forward response headers
+    const responseHeaders = response.headers;
+    for (const [key, value] of Object.entries(responseHeaders)) {
+      if (value !== undefined) {
+        res.setHeader(key, value as string);
+      }
     }
-  }
 
-  res.status(response.statusCode).send(response.payload);
+    res.status(response.statusCode).send(response.payload);
+  } catch (error: any) {
+    console.error('API Handler Error:', error);
+    res.status(500).json({
+      error: 'INTERNAL_SERVER_ERROR',
+      message: error.message || 'Unknown error',
+      stack: process.env.NODE_ENV !== 'production' ? error.stack : undefined,
+    });
+  }
 }
