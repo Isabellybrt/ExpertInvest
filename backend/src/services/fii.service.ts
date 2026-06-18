@@ -1,4 +1,4 @@
-import { fiiSchema } from '@shared/src/schemas.js';
+import { fiiSchema } from 'shared/src/schemas.js';
 import { FIIRepository } from '../repositories/fii.repository.js';
 import { z } from 'zod';
 

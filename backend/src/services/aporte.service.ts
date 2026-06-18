@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { aporteRendaFixaSchema, aporteFIISchema } from '@shared/src/schemas.js';
+import { aporteRendaFixaSchema, aporteFIISchema } from 'shared/src/schemas.js';
 import { AporteRepository } from '../repositories/aporte.repository.js';
 import { RendaFixaRepository } from '../repositories/renda-fixa.repository.js';
 import { FIIRepository } from '../repositories/fii.repository.js';

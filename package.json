@@ -16,5 +16,8 @@
     "frontend",
     "backend",
     "shared"
-  ]
+  ],
+  "devDependencies": {
+    "@vercel/node": "^5.8.17"
+  }
 }
