@@ -10,6 +10,12 @@ import { aporteRoutes } from '../backend/src/routes/aporte.routes.js';
 import { exportRoutes } from '../backend/src/routes/export.routes.js';
 import { dashboardRoutes } from '../backend/src/routes/dashboard.routes.js';
 
+// Import cron dependencies
+import { CronService } from '../backend/src/services/cron.service.js';
+import { MarketDataService } from '../backend/src/services/market-data.service.js';
+import { FIIRepository } from '../backend/src/repositories/fii.repository.js';
+import { CronLogRepository } from '../backend/src/repositories/cron-log.repository.js';
+
 let app: ReturnType<typeof Fastify> | null = null;
 
 async function buildApp() {
@@ -21,6 +27,30 @@ async function buildApp() {
 
   app.get('/api/health', async () => {
     return { status: 'ok', timestamp: new Date().toISOString() };
+  });
+
+  // Cron endpoint for Vercel Cron Jobs - updates FII quotes and dividends
+  app.get('/api/cron/update-quotes', async (request, reply) => {
+    try {
+      const marketDataService = new MarketDataService();
+      const fiiRepository = new FIIRepository();
+      const cronLogRepository = new CronLogRepository();
+
+      const cronService = new CronService({
+        marketDataService,
+        fiiRepository,
+        cronLogRepository,
+      });
+
+      const result = await cronService.executeQuoteUpdate();
+      return reply.code(200).send({ success: true, ...result });
+    } catch (error: any) {
+      console.error('Cron execution error:', error);
+      return reply.code(500).send({
+        error: 'CRON_EXECUTION_FAILED',
+        message: error.message || 'Unknown error',
+      });
+    }
   });
 
   await app.register(authRoutes, { prefix: '/api/auth' });

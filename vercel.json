@@ -3,6 +3,12 @@
   "outputDirectory": "frontend/dist",
   "installCommand": "npm install",
   "framework": null,
+  "crons": [
+    {
+      "path": "/api/cron/update-quotes",
+      "schedule": "0 8,16 * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" }
   ]
