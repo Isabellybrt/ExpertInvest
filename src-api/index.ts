@@ -3,12 +3,12 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 
 // Import routes from backend source
-import { authRoutes } from '../backend/src/routes/auth.routes';
-import { rendaFixaRoutes } from '../backend/src/routes/renda-fixa.routes';
-import { fiiRoutes } from '../backend/src/routes/fii.routes';
-import { aporteRoutes } from '../backend/src/routes/aporte.routes';
-import { exportRoutes } from '../backend/src/routes/export.routes';
-import { dashboardRoutes } from '../backend/src/routes/dashboard.routes';
+import { authRoutes } from '../backend/src/routes/auth.routes.js';
+import { rendaFixaRoutes } from '../backend/src/routes/renda-fixa.routes.js';
+import { fiiRoutes } from '../backend/src/routes/fii.routes.js';
+import { aporteRoutes } from '../backend/src/routes/aporte.routes.js';
+import { exportRoutes } from '../backend/src/routes/export.routes.js';
+import { dashboardRoutes } from '../backend/src/routes/dashboard.routes.js';
 
 let app: ReturnType<typeof Fastify> | null = null;
 

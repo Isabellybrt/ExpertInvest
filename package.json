@@ -9,6 +9,7 @@
     "dev:backend": "npm run dev --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
     "build:backend": "npm run build --workspace=backend",
+    "build:api": "esbuild src-api/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=api/index.js --external:@prisma/client --external:prisma --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
     "test": "npm run test --workspaces",
     "test:frontend": "npm run test --workspace=frontend",
     "test:backend": "npm run test --workspace=backend"
@@ -19,6 +20,7 @@
     "shared"
   ],
   "devDependencies": {
-    "@vercel/node": "^5.8.17"
+    "@vercel/node": "^5.8.17",
+    "esbuild": "^0.28.1"
   }
 }
