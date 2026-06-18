@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // === Enums ===
@@ -45,10 +46,10 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  rendaFixa           RendaFixa[]
-  fiis                FII[]
-  aportes             Aporte[]
-  sessions            Session[]
+  rendaFixa RendaFixa[]
+  fiis      FII[]
+  aportes   Aporte[]
+  sessions  Session[]
 }
 
 model Session {
@@ -59,7 +60,7 @@ model Session {
   createdAt    DateTime @default(now())
   lastActivity DateTime @default(now())
 
-  user         User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -76,8 +77,8 @@ model RendaFixa {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  user           User     @relation(fields: [userId], references: [id])
-  aportes        Aporte[]
+  user    User     @relation(fields: [userId], references: [id])
+  aportes Aporte[]
 
   @@index([userId])
 }
@@ -92,10 +93,10 @@ model FII {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user         User     @relation(fields: [userId], references: [id])
-  aportes      Aporte[]
-  quotes       FIIQuote[]
-  dividends    FIIDividend[]
+  user      User          @relation(fields: [userId], references: [id])
+  aportes   Aporte[]
+  quotes    FIIQuote[]
+  dividends FIIDividend[]
 
   @@index([userId])
 }
@@ -107,7 +108,7 @@ model FIIQuote {
   sourceDate DateTime
   updatedAt  DateTime @default(now())
 
-  fii        FII      @relation(fields: [fiiId], references: [id], onDelete: Cascade)
+  fii FII @relation(fields: [fiiId], references: [id], onDelete: Cascade)
 
   @@index([fiiId, updatedAt])
 }
@@ -120,11 +121,10 @@ model FIIDividend {
   paymentDate      DateTime
   updatedAt        DateTime @default(now())
 
-  fii              FII      @relation(fields: [fiiId], references: [id], onDelete: Cascade)
+  fii FII @relation(fields: [fiiId], references: [id], onDelete: Cascade)
 
   @@index([fiiId, paymentDate])
 }
-
 
 model Aporte {
   id            String        @id @default(uuid())
@@ -139,9 +139,9 @@ model Aporte {
   date          DateTime
   createdAt     DateTime      @default(now())
 
-  user          User          @relation(fields: [userId], references: [id])
-  rendaFixa     RendaFixa?    @relation(fields: [rendaFixaId], references: [id], onDelete: SetNull)
-  fii           FII?          @relation(fields: [fiiId], references: [id], onDelete: SetNull)
+  user      User       @relation(fields: [userId], references: [id])
+  rendaFixa RendaFixa? @relation(fields: [rendaFixaId], references: [id], onDelete: SetNull)
+  fii       FII?       @relation(fields: [fiiId], references: [id], onDelete: SetNull)
 
   @@index([userId, date])
 }
@@ -163,5 +163,5 @@ model CronLog {
   successCount  Int
   failureCount  Int
   errors        Json?
-  duration      Int      // milliseconds
+  duration      Int // milliseconds
 }
