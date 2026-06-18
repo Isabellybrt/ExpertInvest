@@ -53,6 +53,72 @@ async function buildApp() {
     }
   });
 
+  // Manual endpoint - force update quotes/dividends without 8h cooldown
+  app.get('/api/fiis/update-quotes', async (request, reply) => {
+    try {
+      const marketDataService = new MarketDataService();
+      const fiiRepository = new FIIRepository();
+      const cronLogRepository = new CronLogRepository();
+
+      const allFiis = await fiiRepository.findAll();
+
+      // Get distinct tickers
+      const tickers = [...new Set(allFiis.map(f => f.ticker))];
+
+      let successCount = 0;
+      let failureCount = 0;
+      const errors: Array<{ ticker: string; error: string }> = [];
+
+      for (const ticker of tickers) {
+        try {
+          const quoteData = await marketDataService.fetchQuote(ticker);
+          const dividendData = await marketDataService.fetchDividendData(ticker);
+
+          const fiiIds = allFiis.filter(f => f.ticker === ticker).map(f => f.id);
+          for (const fiiId of fiiIds) {
+            await fiiRepository.createQuote({
+              fiiId,
+              price: quoteData.price,
+              sourceDate: quoteData.sourceDate,
+            });
+            await fiiRepository.createDividend({
+              fiiId,
+              dividendPerShare: dividendData.dividendPerShare,
+              dividendYield: dividendData.dividendYield,
+              paymentDate: dividendData.paymentDate,
+            });
+          }
+          successCount++;
+        } catch (error: any) {
+          failureCount++;
+          errors.push({ ticker, error: error.message || String(error) });
+        }
+      }
+
+      // Log execution
+      await cronLogRepository.create({
+        successCount,
+        failureCount,
+        errors: errors.length > 0 ? errors : undefined,
+        duration: 0,
+      });
+
+      return reply.code(200).send({
+        success: true,
+        totalTickers: tickers.length,
+        successCount,
+        failureCount,
+        errors,
+      });
+    } catch (error: any) {
+      console.error('Manual update error:', error);
+      return reply.code(500).send({
+        error: 'UPDATE_FAILED',
+        message: error.message || 'Unknown error',
+      });
+    }
+  });
+
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(rendaFixaRoutes, { prefix: '/api/renda-fixa' });
   await app.register(fiiRoutes, { prefix: '/api/fiis' });
