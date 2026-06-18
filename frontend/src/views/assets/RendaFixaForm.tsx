@@ -47,7 +47,7 @@ export function RendaFixaForm({ editingAsset, onSuccess }: RendaFixaFormProps) {
     if (editingAsset) {
       setInstitution(editingAsset.institution);
       setInvestedAmount(String(editingAsset.investedAmount));
-      setMaturityDate(editingAsset.maturityDate.split('T')[0]);
+      setMaturityDate(editingAsset.maturityDate.split('T')[0] ?? '');
       setRateType(editingAsset.rateType);
       setRateValue(String(editingAsset.rateValue));
     }

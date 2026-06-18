@@ -44,7 +44,8 @@ interface CustomTooltipProps {
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    const entry = payload[0].payload;
+    const entry = payload[0]?.payload;
+    if (!entry) return null;
     return (
       <div className="bg-white shadow-lg rounded-lg p-3 border border-gray-200">
         <p className="font-medium text-sm text-gray-900">{entry.name}</p>
