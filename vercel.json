@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run prisma:generate --workspace=backend && npm run build:api && npm run build:frontend",
+  "buildCommand": "npx prisma generate --schema=backend/prisma/schema.prisma && npm run build:api && npm run build:frontend",
   "outputDirectory": "frontend/dist",
   "installCommand": "npm install",
   "framework": null,
