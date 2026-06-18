@@ -2,6 +2,7 @@
   "name": "expert-invest",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Investment Portfolio Manager - Monorepo",
   "scripts": {
     "dev:frontend": "npm run dev --workspace=frontend",
