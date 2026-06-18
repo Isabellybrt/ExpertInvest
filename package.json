@@ -2,14 +2,13 @@
   "name": "expert-invest",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "description": "Investment Portfolio Manager - Monorepo",
   "scripts": {
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
     "build:backend": "npm run build --workspace=backend",
-    "build:api": "esbuild src-api/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=api/index.js --external:@prisma/client --external:prisma --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
+    "build:api": "esbuild src-api/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=api/index.js --external:@prisma/client --external:prisma",
     "test": "npm run test --workspaces",
     "test:frontend": "npm run test --workspace=frontend",
     "test:backend": "npm run test --workspace=backend"
