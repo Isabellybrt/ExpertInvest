@@ -6,11 +6,10 @@
   "crons": [
     {
       "path": "/api/cron/update-quotes",
-      "schedule": "0 8,16 * * *"
+      "schedule": "0 12 * * *"
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api" }
   ]
 }
