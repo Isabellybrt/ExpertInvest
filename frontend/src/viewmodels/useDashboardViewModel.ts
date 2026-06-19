@@ -170,6 +170,13 @@ export function useDashboardViewModel(): UseDashboardViewModel {
     usePortfolioStore.getState().clearCache();
 
     try {
+      // First, trigger quote/dividend update in background (best-effort, don't block dashboard)
+      try {
+        await fetch('/api/fiis/update-quotes');
+      } catch {
+        // Silently ignore — update is best-effort
+      }
+
       // Wrap entire dashboard load in a 10-second timeout (Req 16.4)
       await withTimeout(
         (async () => {
