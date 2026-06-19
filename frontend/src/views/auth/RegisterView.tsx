@@ -31,6 +31,21 @@ export function RegisterView() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    await loginWithGoogle();
+    const stored = localStorage.getItem('auth-storage');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed?.state?.isAuthenticated) {
+          navigate('/');
+        }
+      } catch {
+        // ignore
+      }
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
@@ -168,7 +183,7 @@ export function RegisterView() {
 
           <button
             type="button"
-            onClick={loginWithGoogle}
+            onClick={handleGoogleLogin}
             disabled={isLoading}
             className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-3 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:py-2 sm:text-sm"
           >
