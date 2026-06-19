@@ -151,9 +151,18 @@ export function useAuthViewModel(): UseAuthViewModel {
     }
   }, [clearAuth]);
 
-  const loginWithGoogle = useCallback((): void => {
-    authService.loginWithGoogle();
-  }, []);
+  const loginWithGoogle = useCallback(async (): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await authService.loginWithGoogle();
+      setAuth(result.user, result.tokens);
+    } catch (err: any) {
+      setError(err.message || 'Falha ao entrar com Google. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setAuth]);
 
   const clearError = useCallback((): void => {
     setError(null);

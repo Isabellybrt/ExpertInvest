@@ -55,9 +55,40 @@ const authService = {
     };
   },
 
-  async loginWithGoogle(): Promise<void> {
-    // Redirect to backend Google OAuth endpoint
-    window.location.href = '/api/auth/google';
+  async loginWithGoogle(): Promise<AuthResult> {
+    return new Promise((resolve, reject) => {
+      const clientId = (window as any).__GOOGLE_CLIENT_ID__;
+      if (!clientId) {
+        reject(new Error('Google OAuth não está configurado. Defina VITE_GOOGLE_CLIENT_ID.'));
+        return;
+      }
+
+      // Load Google Identity Services if not already loaded
+      if (!(window as any).google?.accounts?.id) {
+        reject(new Error('Google Identity Services não carregado. Recarregue a página.'));
+        return;
+      }
+
+      (window as any).google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response: { credential: string }) => {
+          try {
+            const apiResponse = await apiClient.post<{ accessToken: string; refreshToken: string; user: AuthUser }>('/auth/google', { token: response.credential });
+            resolve({
+              user: apiResponse.data.user,
+              tokens: {
+                accessToken: apiResponse.data.accessToken,
+                refreshToken: apiResponse.data.refreshToken,
+              },
+            });
+          } catch (error) {
+            reject(error);
+          }
+        },
+      });
+
+      (window as any).google.accounts.id.prompt();
+    });
   },
 
   async logout(): Promise<void> {
